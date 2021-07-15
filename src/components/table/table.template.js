@@ -57,20 +57,24 @@ function makeRowData() {
   return rowData
 }
 
-function makeColumn(text) {
+function makeColumn(text, index) {
   const column = document.createElement('div')
   column.classList.add('column')
+  column.setAttribute('data-col', index)
   column.innerHTML = `${text}`
   const colResize = document.createElement('div')
   colResize.classList.add('col-resize')
   colResize.setAttribute('data-resize', 'col')
+
   column.append(colResize)
   return column
 }
 
-function makeCell(text = '') {
+function makeCell(text = '', index) {
   const cell = document.createElement('div')
   cell.classList.add('cell')
+  cell.setAttribute('data-col', index)
+  cell.setAttribute('contenteditable', true)
   cell.innerText = text
   return cell
 }
