@@ -41,7 +41,13 @@ function makeRow(columnsCount, numRow) {
 function makeRowInfo(numRow) {
   const rowInfo = document.createElement('div')
   rowInfo.classList.add('row-info')
-  if (numRow) rowInfo.innerText = numRow
+  if (numRow) {
+    rowInfo.innerText = numRow
+    const rowResize = document.createElement('div')
+    rowResize.classList.add('row-resize')
+    rowResize.setAttribute('data-resize', 'row')
+    rowInfo.append(rowResize)
+  }
   return rowInfo
 }
 
@@ -55,6 +61,10 @@ function makeColumn(text) {
   const column = document.createElement('div')
   column.classList.add('column')
   column.innerHTML = `${text}`
+  const colResize = document.createElement('div')
+  colResize.classList.add('col-resize')
+  colResize.setAttribute('data-resize', 'col')
+  column.append(colResize)
   return column
 }
 
