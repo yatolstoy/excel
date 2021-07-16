@@ -29,7 +29,7 @@ function makeRow(columnsCount, numRow) {
 
   const rowData = makeRowData(row)
 
-  return `<div class="row" data-type="resizable">
+  return `<div class="row" data-type="resizable" data-row="${numRow}">
           ${rowInfo}
           ${rowData}
          </div>`

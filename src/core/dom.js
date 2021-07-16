@@ -75,6 +75,11 @@ class Dom {
     this.$el.classList.add(className)
     return this
   }
+
+  removeClass(className) {
+    this.$el.classList.remove(className)
+    return this
+  }
 }
 
 export function $(selector) {

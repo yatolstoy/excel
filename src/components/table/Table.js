@@ -1,6 +1,6 @@
 import {ExcelComponent} from '../../core/ExcelComponent';
 import {createTable} from './table.template';
-import {$} from '@core/dom'
+import {TableSelection} from './table.selection';
 
 import {startResize} from './resize';
 
@@ -19,13 +19,8 @@ export class Table extends ExcelComponent {
   }
 
   onClick(event) {
-    const $target = $(event.target)
-    this.$root
-        .findAll('.selected')
-        .forEach(el => el.classList.remove('selected'))
-    if ($target.hasClass('cell')) {
-      $target.addClass('selected')
-    }
+    const selection = new TableSelection(this.$root)
+    selection.select(event)
   }
 
   onMousedown(event) {
