@@ -11,6 +11,4 @@ const excel = new Excel('#app', {
 
 excel.render()
 
-// setTimeout(() => {
-//   excel.destroy()
-// }, 5000)
+

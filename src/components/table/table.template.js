@@ -5,64 +5,60 @@ export function createTable(rowsCount = 100, columnsCount = 27) {
   const resultHTML = []
   for (let i = 0; i < rowsCount; i++) {
     const row = makeRow(columnsCount, i)
-    resultHTML.push(row.outerHTML)
+    resultHTML.push(row)
   }
-
   return resultHTML.join('')
 }
 
 function makeRow(columnsCount, numRow) {
-  const row = document.createElement('div')
-  row.classList.add('row')
-
   const rowInfo = makeRowInfo(numRow)
-  row.append(rowInfo)
-
-  const rowData = makeRowData()
+  let row = ''
 
   if (!numRow) {
-    new Array(columnsCount)
+    row = new Array(columnsCount)
         .fill('')
         .map(getLetter)
         .map(makeColumn)
-        .forEach(el => rowData.append(el))
+        .join('')
   } else {
-    new Array(columnsCount)
+    row = new Array(columnsCount)
         .fill('')
         .map(makeCell)
-        .forEach(el => rowData.append(el))
+        .join('')
   }
 
-  row.append(rowData)
+  const rowData = makeRowData(row)
 
-  return row
+  return `<div class="row" data-type="resizable">
+          ${rowInfo}
+          ${rowData}
+         </div>`
 }
 
 function makeRowInfo(numRow) {
-  const rowInfo = document.createElement('div')
-  rowInfo.classList.add('row-info')
-  if (numRow) rowInfo.innerText = numRow
-  return rowInfo
+  const resizer = `<div class="row-resize" data-resize="row"></div>`
+  return `<div class="row-info">
+            ${numRow ? numRow : ''}
+            ${numRow ? resizer : ''}
+          </div>`
 }
 
-function makeRowData() {
-  const rowData = document.createElement('div')
-  rowData.classList.add('row-data')
-  return rowData
+function makeRowData(row) {
+  return `<div class="row-data">${row}</div>`
 }
 
-function makeColumn(text) {
-  const column = document.createElement('div')
-  column.classList.add('column')
-  column.innerHTML = `${text}`
-  return column
+function makeColumn(text, index) {
+  return `<div class="column" data-type="resizable" data-col="${index}">
+            ${text}
+            <div class="col-resize" data-resize="col">
+            </div>
+          </div>`
 }
 
-function makeCell(text = '') {
-  const cell = document.createElement('div')
-  cell.classList.add('cell')
-  cell.innerText = text
-  return cell
+function makeCell(text = '', col) {
+  return `<div class="cell" data-col="${col}" contenteditable>
+            ${text}
+          </div>`
 }
 
 function getLetter(_, number) {

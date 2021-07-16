@@ -11,7 +11,8 @@
     "arrow-parens":"off",
     "require-jsdoc": "off",
     "operator-linebreak":"off",
-    "no-debugger":"off"
+    "no-debugger":"off",
+    "no-invalid-this":"off"
   },
   "extends": ["eslint:recommended", "google"]
 }
