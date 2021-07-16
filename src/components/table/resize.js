@@ -1,6 +1,6 @@
 import {$} from '@core/dom'
 
-export function startResize(event) {
+export function startResize($root, event) {
   const $resizer = $(event.target)
   if (!$resizer.data.resize) return
   const $parent = $resizer.closest('[data-type="resizable"]')
@@ -32,7 +32,7 @@ export function startResize(event) {
     })
     $parent.css({[type]: value})
     if (type === 'width') {
-      this.$root
+      $root
           .findAll(`[data-col="${$parent.data.col}"]`)
           .forEach(el => $(el).css({[type]: value}))
     }

@@ -29,7 +29,7 @@ export class Table extends ExcelComponent {
   }
 
   onMousedown(event) {
-    startResize.call(this, event)
+    startResize(this.$root, event)
   }
 }
 
