@@ -55,8 +55,8 @@ function makeColumn(text, index) {
           </div>`
 }
 
-function makeCell(text = '', index) {
-  return `<div class="cell" data-col="${index}" contenteditable>
+function makeCell(text = '', col) {
+  return `<div class="cell" data-col="${col}" contenteditable>
             ${text}
           </div>`
 }
