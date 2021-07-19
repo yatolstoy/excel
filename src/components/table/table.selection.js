@@ -1,22 +1,27 @@
-import {$} from '@core/dom'
-
 export class TableSelection {
+  static className = 'selected'
   constructor($root) {
     this.$root = $root
+    this.current = null
+    this.group = []
   }
 
-  select(event) {
-    const $target = $(event.target)
-    const col = $target.closest('[data-col]').data.col
-    const row = $target.closest('[data-row]').data.row
-
-    this.$root.findAll('.selected')
-        .forEach(el => $(el).removeClass('selected'))
-
-    if (col && row) $target.addClass('selected')
+  select($el) {
+    this.clear()
+    this.group.push($el)
+    this.current = $el
+    $el.focus().addClass(TableSelection.className)
   }
 
-  selectGroup() {
+  selectGroup($cells = []) {
+    this.clear()
+    this.group = $cells
+    this.group.forEach($el => $el.addClass(TableSelection.className))
+  }
 
+  clear() {
+    this.group.forEach(el => el.removeClass(TableSelection.className))
+    this.group = []
   }
 }
+

@@ -23,7 +23,7 @@ function makeRow(columnsCount, numRow) {
   } else {
     row = new Array(columnsCount)
         .fill('')
-        .map(makeCell)
+        .map(makeCell(numRow))
         .join('')
   }
 
@@ -55,10 +55,15 @@ function makeColumn(text, index) {
           </div>`
 }
 
-function makeCell(text = '', col) {
-  return `<div class="cell" data-col="${col}" contenteditable>
-            ${text}
-          </div>`
+function makeCell(row) {
+  return function(text = '', col) {
+    return `<div  class="cell" 
+                  contenteditable
+                  data-col="${col}" 
+                  data-id="${col}:${row}">
+    ${text}
+  </div>`
+  }
 }
 
 function getLetter(_, number) {
