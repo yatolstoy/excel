@@ -1,17 +1,21 @@
 import {$} from '@core/dom'
+import {Emitter} from '@core/Emitter'
 
-// eslint-disable-next-line require-jsdoc
 export class Excel {
   constructor(selector, options) {
     this.$el = $(selector)
     this.components = options.components || []
+    this.emitter = new Emitter()
   }
 
   getRoot() {
     const $root = $.create('div', 'excel')
     this.components = this.components.map(Component => {
       const $el = $.create('div', Component.className)
-      const component = new Component($el)
+      const options = {
+        emitter: this.emitter,
+      }
+      const component = new Component($el, options)
       $el.html(component.toHTML())
       $root.append($el)
       return component

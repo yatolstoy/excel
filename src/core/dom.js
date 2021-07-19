@@ -64,7 +64,7 @@ class Dom {
   }
 
   find(selector) {
-    return this.$el.querySelector(selector)
+    return $(this.$el.querySelector(selector))
   }
 
   hasClass(className) {
@@ -74,6 +74,39 @@ class Dom {
   addClass(className) {
     this.$el.classList.add(className)
     return this
+  }
+
+  removeClass(className) {
+    this.$el.classList.remove(className)
+    return this
+  }
+
+  id(parse) {
+    if (parse) {
+      const params = this.id().split(':')
+      return {
+        col: +params[0],
+        row: +params[1],
+      }
+    }
+    return this.data.id
+  }
+
+  focus() {
+    this.$el.focus()
+    return this
+  }
+
+  text(text) {
+    if (text !== undefined) {
+      this.$el.innerText = text
+      return this
+    }
+    return this.$el.innerText
+  }
+
+  isSameEl($el) {
+    return this.$el === $el.$el
   }
 }
 
