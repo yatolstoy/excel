@@ -96,6 +96,18 @@ class Dom {
     this.$el.focus()
     return this
   }
+
+  text(text) {
+    if (text !== undefined) {
+      this.$el.innerText = text
+      return this
+    }
+    return this.$el.innerText
+  }
+
+  isSameEl($el) {
+    return this.$el === $el.$el
+  }
 }
 
 export function $(selector) {
