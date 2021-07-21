@@ -17,6 +17,9 @@ export class Formula extends ExcelComponent {
     this.$on('table:textChanged', (data) => {
       this.formula.text(data)
     })
+    this.$subscribe(state => {
+      console.log(state)
+    })
   }
 
   toHTML() {

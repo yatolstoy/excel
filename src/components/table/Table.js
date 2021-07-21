@@ -4,6 +4,7 @@ import {TableSelection} from './Table.selection';
 import {startResize} from './resize';
 import {$} from '../../core/dom';
 import {matrix, nextSelector} from './table.functions';
+import * as actions from '../../redux/actions'
 
 export class Table extends ExcelComponent {
   constructor($root, options) {
@@ -17,7 +18,7 @@ export class Table extends ExcelComponent {
 
   static className = 'excel__table'
   toHTML() {
-    return createTable()
+    return createTable(this.$state())
   }
 
   prepare() {
@@ -26,6 +27,7 @@ export class Table extends ExcelComponent {
 
   init() {
     super.init()
+
     const $cell = this.$root.find('[data-id="0:1"]')
     this.selectCell($cell)
 
@@ -44,10 +46,17 @@ export class Table extends ExcelComponent {
     this.$emit('table:textChanged', $cell.text())
   }
 
+  async resizeTable(event) {
+    const data = await startResize(this.$root, event)
+    if (data.type === 'col') {
+      this.$dispatch(actions.tableResize(data))
+    }
+  }
+
   onMousedown(event) {
     const $target = $(event.target)
     if ($target.data.resize) {
-      startResize(this.$root, event)
+      this.resizeTable(event)
       return
     }
     if (!this.selection.current.isSameEl($target)) {
@@ -58,7 +67,7 @@ export class Table extends ExcelComponent {
           .map(id => this.$root.find(`[data-id="${id}"]`))
       this.selection.selectGroup($cells)
     } else {
-      this.selection.select($target)
+      this.selectCell($target)
     }
   }
 

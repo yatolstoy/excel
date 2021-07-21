@@ -1,34 +1,43 @@
 const FROMCHARCODE = 64
 const LETTERSLENGTH = 26
 
-export function createTable(rowsCount = 100, columnsCount = 27) {
+export function createTable(state) {
   const resultHTML = []
-  for (let i = 0; i < rowsCount; i++) {
-    const row = makeRow(columnsCount, i)
+  for (let i = 0; i < state.rowsCount; i++) {
+    const row = makeRow(state.columnsCount, i, state)
     resultHTML.push(row)
   }
   return resultHTML.join('')
 }
 
-function makeRow(columnsCount, numRow) {
+function withWidthFrom(state) {
+  return (text, index) => {
+    return {
+      text, index, style: getWidthStyle(state, index),
+    }
+  }
+}
+
+function makeRow(columnsCount, numRow, state) {
   const rowInfo = makeRowInfo(numRow)
   let row = ''
+  const colState = state.colResize
 
   if (!numRow) {
     row = new Array(columnsCount)
         .fill('')
         .map(getLetter)
+        .map(withWidthFrom(colState))
         .map(makeColumn)
         .join('')
   } else {
     row = new Array(columnsCount)
         .fill('')
-        .map(makeCell(numRow))
+        .map(makeCell(numRow, colState))
         .join('')
   }
 
   const rowData = makeRowData(row)
-
   return `<div class="row" data-type="resizable" data-row="${numRow}">
           ${rowInfo}
           ${rowData}
@@ -47,23 +56,32 @@ function makeRowData(row) {
   return `<div class="row-data">${row}</div>`
 }
 
-function makeColumn(text, index) {
-  return `<div class="column" data-type="resizable" data-col="${index}">
+function makeColumn({text, index, style}) {
+  return `<div  class="column" 
+                ${style}' 
+                data-type="resizable" 
+                data-col="${index}">
             ${text}
             <div class="col-resize" data-resize="col">
             </div>
-          </div>`
+            </div>`
 }
 
-function makeCell(row) {
+function makeCell(row, colStyle) {
   return function(text = '', col) {
+    const style = getWidthStyle(colStyle, col)
     return `<div  class="cell" 
                   contenteditable
                   data-col="${col}" 
-                  data-id="${col}:${row}">
+                  data-id="${col}:${row}"
+                  ${style}>
     ${text}
   </div>`
   }
+}
+
+function getWidthStyle(state, index) {
+  return (state[index]) ? `style="width: ${state[index]};"` : ''
 }
 
 function getLetter(_, number) {
