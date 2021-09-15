@@ -18,7 +18,7 @@ export class Formula extends ExcelComponent {
       this.formula.text(data)
     })
     this.$subscribe(state => {
-      console.log(state)
+      this.formula.text(state.currentText)
     })
   }
 

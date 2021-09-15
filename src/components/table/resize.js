@@ -37,7 +37,12 @@ export function startResize($root, event) {
             .forEach(el => $(el).css({width: value}))
       }
       document.onmouseup = null
-      resolve({id: $parent.data.col, value: value, type: $resizer.data.resize})
+
+      resolve({
+        id: $parent.data[$resizer.data.resize],
+        value: value,
+        type: $resizer.data.resize,
+      })
     }
   })
 }

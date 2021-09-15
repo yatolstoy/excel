@@ -21,8 +21,8 @@ function withWidthFrom(state) {
 function makeRow(columnsCount, numRow, state) {
   const rowInfo = makeRowInfo(numRow)
   let row = ''
-  const colState = state.colResize
-
+  const colState = state.colResize || {}
+  const rowState = state.rowResize || {}
   if (!numRow) {
     row = new Array(columnsCount)
         .fill('')
@@ -33,12 +33,16 @@ function makeRow(columnsCount, numRow, state) {
   } else {
     row = new Array(columnsCount)
         .fill('')
-        .map(makeCell(numRow, colState))
+        .map(makeCell(numRow, state))
         .join('')
   }
 
   const rowData = makeRowData(row)
-  return `<div class="row" data-type="resizable" data-row="${numRow}">
+  return `<div class="row" 
+              data-type="resizable" 
+              data-row="${numRow}" 
+              style="${(rowState[numRow]) ? 'height:'+rowState[numRow] : ''};"
+          >
           ${rowInfo}
           ${rowData}
          </div>`
@@ -67,22 +71,24 @@ function makeColumn({text, index, style}) {
             </div>`
 }
 
-function makeCell(row, colStyle) {
-  return function(text = '', col) {
-    const style = getWidthStyle(colStyle, col)
+function makeCell(row, state) {
+  return function(_, col) {
+    const style = getWidthStyle(state.colResize, col)
+    const id = `${col}:${row}`
     return `<div  class="cell" 
                   contenteditable
                   data-col="${col}" 
-                  data-id="${col}:${row}"
+                  data-id="${id}"
                   ${style}>
-    ${text}
+    ${state.dataState[id] || ''}
   </div>`
   }
 }
 
 function getWidthStyle(state, index) {
-  return (state[index]) ? `style="width: ${state[index]};"` : ''
+  return (state && state[index]) ? `style="width: ${state[index]};"` : ''
 }
+
 
 function getLetter(_, number) {
   number++

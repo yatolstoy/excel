@@ -1,13 +1,21 @@
-import {TABLE_RESIZE} from './types'
+import {CHANGE_TEXT, TABLE_RESIZE} from './types'
 
 export function rootReducer(state, action) {
-  let preventColResize
+  let preventState
+  let field
   switch (action.type) {
     case TABLE_RESIZE:
-      preventColResize = state.colResize || {}
-      state.colResize = {...preventColResize,
-        [action.data.id]: action.data.value}
+      field = action.data.type === 'col' ? 'colResize' : 'rowResize'
+      preventState = state[field] || {}
+      state[field] = {
+        ...preventState,
+        [action.data.id]: action.data.value,
+      }
       break;
+    case CHANGE_TEXT:
+      preventState = state['dataState']
+      preventState[action.data.id] = action.data.value
+      return {...state, currentText: action.data.value, dataState: preventState}
     default:
       return state
   }

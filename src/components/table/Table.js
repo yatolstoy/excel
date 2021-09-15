@@ -31,9 +31,10 @@ export class Table extends ExcelComponent {
     const $cell = this.$root.find('[data-id="0:1"]')
     this.selectCell($cell)
 
-    this.$on('formula:input', (data) => {
+    this.$on('formula:input', (text) => {
       const $current = this.selection.current
-      $current.text(data)
+      $current.text(text)
+      this.updateTextInStore(text)
     })
 
     this.$on('formula:enterPressed', () => {
@@ -47,9 +48,11 @@ export class Table extends ExcelComponent {
   }
 
   async resizeTable(event) {
-    const data = await startResize(this.$root, event)
-    if (data.type === 'col') {
+    try {
+      const data = await startResize(this.$root, event)
       this.$dispatch(actions.tableResize(data))
+    } catch (e) {
+      console.warn('Resize error', e.message)
     }
   }
 
@@ -71,8 +74,16 @@ export class Table extends ExcelComponent {
     }
   }
 
+  updateTextInStore(value) {
+    this.$dispatch(actions.changeText({
+      id: this.selection.current.id(),
+      value,
+    }))
+  }
+
   onInput() {
-    this.$emit('table:textChanged', this.selection.current.text())
+    // this.$emit('table:textChanged', this.selection.current.text())
+    this.updateTextInStore(this.selection.current.text())
   }
 
   onKeydown(event) {
