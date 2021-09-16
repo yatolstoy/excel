@@ -55,6 +55,13 @@ class Dom {
     return this
   }
 
+  getStyles(styles = []) {
+    return styles.reduce((res, s) => {
+      res[s] = this.$el.style[s]
+      return res
+    }, {})
+  }
+
   get data() {
     return this.$el.dataset
   }
@@ -69,6 +76,10 @@ class Dom {
 
   hasClass(className) {
     return this.$el.classList.contains(className)
+  }
+
+  value() {
+    return this.$el.value
   }
 
   addClass(className) {
@@ -98,15 +109,26 @@ class Dom {
   }
 
   text(text) {
-    if (text !== undefined) {
-      this.$el.innerText = text
+    if (typeof text !== undefined) {
+      this.$el.textContent = text
       return this
     }
-    return this.$el.innerText
+    if (this.$el.tagName.toLowerCase() === 'input') {
+      return this.$el.textContent.trim()
+    }
+    return this.$el.textContent.trim()
   }
 
   isSameEl($el) {
     return this.$el === $el.$el
+  }
+
+  attr(name, value) {
+    if (value) {
+      this.$el.setAttribute(name, value)
+      return this
+    }
+    return this.$el.getAttribute(name)
   }
 }
 

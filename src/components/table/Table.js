@@ -4,6 +4,9 @@ import {TableSelection} from './Table.selection';
 import {startResize} from './resize';
 import {$} from '../../core/dom';
 import {matrix, nextSelector} from './table.functions';
+import * as actions from '../../redux/actions'
+import {defaultStyles} from '../../constants';
+import {parse} from '@core/parse'
 
 export class Table extends ExcelComponent {
   constructor($root, options) {
@@ -17,7 +20,7 @@ export class Table extends ExcelComponent {
 
   static className = 'excel__table'
   toHTML() {
-    return createTable()
+    return createTable(this.$state())
   }
 
   prepare() {
@@ -26,44 +29,74 @@ export class Table extends ExcelComponent {
 
   init() {
     super.init()
+
     const $cell = this.$root.find('[data-id="0:1"]')
     this.selectCell($cell)
 
-    this.$on('formula:input', (data) => {
+    this.$on('formula:input', (text) => {
       const $current = this.selection.current
-      $current.text(data)
+      $current.attr('data-value', text)
+          .text(parse(text))
+      this.updateTextInStore(text)
     })
 
     this.$on('formula:enterPressed', () => {
       this.selection.select(this.selection.current)
     })
+
+    this.$on('toolbar:applyStyle', value => {
+      this.selection.applyStyle(value)
+      console.log(this.selection)
+      this.$dispatch(actions.applyStyle({
+        value,
+        ids: this.selection.selectedIds,
+      }))
+    })
   }
 
   selectCell($cell) {
     this.selection.select($cell)
-    this.$emit('table:textChanged', $cell.text())
+    this.$emit('table:textChanged', $cell)
+    const styles = $cell.getStyles(Object.keys(defaultStyles))
+    this.$dispatch(actions.changeStyles(styles))
+  }
+
+  async resizeTable(event) {
+    try {
+      const data = await startResize(this.$root, event)
+      this.$dispatch(actions.tableResize(data))
+    } catch (e) {
+      console.warn('Resize error', e.message)
+    }
   }
 
   onMousedown(event) {
     const $target = $(event.target)
     if ($target.data.resize) {
-      startResize(this.$root, event)
+      this.resizeTable(event)
       return
     }
     if (!this.selection.current.isSameEl($target)) {
-      this.$emit('table:textChanged', this.selection.current.text())
+      this.$emit('table:textChanged', this.selection.current)
     }
     if (event.shiftKey) {
       const $cells = matrix($target, this.selection.current)
           .map(id => this.$root.find(`[data-id="${id}"]`))
       this.selection.selectGroup($cells)
     } else {
-      this.selection.select($target)
+      this.selectCell($target)
     }
   }
 
+  updateTextInStore(value) {
+    this.$dispatch(actions.changeText({
+      id: this.selection.current.id(),
+      value,
+    }))
+  }
+
   onInput() {
-    this.$emit('table:textChanged', this.selection.current.text())
+    this.updateTextInStore(this.selection.current.text())
   }
 
   onKeydown(event) {
