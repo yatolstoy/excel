@@ -1,3 +1,6 @@
+import {toInlineStyles} from '@core/utils'
+import {defaultStyles} from '../../constants'
+import {parse} from '@core/parse'
 const FROMCHARCODE = 64
 const LETTERSLENGTH = 26
 
@@ -12,8 +15,11 @@ export function createTable(state) {
 
 function withWidthFrom(state) {
   return (text, index) => {
+    const width = getWidthStyle(state, index)
     return {
-      text, index, style: getWidthStyle(state, index),
+      text,
+      index,
+      style: width ? `style="width:${getWidthStyle(state, index)}` : '',
     }
   }
 }
@@ -73,20 +79,27 @@ function makeColumn({text, index, style}) {
 
 function makeCell(row, state) {
   return function(_, col) {
-    const style = getWidthStyle(state.colResize, col)
+    const width = getWidthStyle(state.colResize, col)
     const id = `${col}:${row}`
+    const data = state.dataState[id] || ''
+    const styles = toInlineStyles({
+      ...defaultStyles,
+      ...state.stylesState[id],
+    })
+    'font-weight: bold; text...'
     return `<div  class="cell" 
                   contenteditable
                   data-col="${col}" 
                   data-id="${id}"
-                  ${style}>
-    ${state.dataState[id] || ''}
+                  data-value="${data || ''}"
+                  style="${styles}; width:${width}">
+    ${parse(data)}
   </div>`
   }
 }
 
 function getWidthStyle(state, index) {
-  return (state && state[index]) ? `style="width: ${state[index]};"` : ''
+  return (state && state[index]) ? `${state[index]};"` : ''
 }
 
 

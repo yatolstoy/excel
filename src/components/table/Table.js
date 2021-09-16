@@ -5,6 +5,8 @@ import {startResize} from './resize';
 import {$} from '../../core/dom';
 import {matrix, nextSelector} from './table.functions';
 import * as actions from '../../redux/actions'
+import {defaultStyles} from '../../constants';
+import {parse} from '@core/parse'
 
 export class Table extends ExcelComponent {
   constructor($root, options) {
@@ -33,18 +35,30 @@ export class Table extends ExcelComponent {
 
     this.$on('formula:input', (text) => {
       const $current = this.selection.current
-      $current.text(text)
+      $current.attr('data-value', text)
+          .text(parse(text))
       this.updateTextInStore(text)
     })
 
     this.$on('formula:enterPressed', () => {
       this.selection.select(this.selection.current)
     })
+
+    this.$on('toolbar:applyStyle', value => {
+      this.selection.applyStyle(value)
+      console.log(this.selection)
+      this.$dispatch(actions.applyStyle({
+        value,
+        ids: this.selection.selectedIds,
+      }))
+    })
   }
 
   selectCell($cell) {
     this.selection.select($cell)
-    this.$emit('table:textChanged', $cell.text())
+    this.$emit('table:textChanged', $cell)
+    const styles = $cell.getStyles(Object.keys(defaultStyles))
+    this.$dispatch(actions.changeStyles(styles))
   }
 
   async resizeTable(event) {
@@ -63,7 +77,7 @@ export class Table extends ExcelComponent {
       return
     }
     if (!this.selection.current.isSameEl($target)) {
-      this.$emit('table:textChanged', this.selection.current.text())
+      this.$emit('table:textChanged', this.selection.current)
     }
     if (event.shiftKey) {
       const $cells = matrix($target, this.selection.current)
@@ -82,7 +96,6 @@ export class Table extends ExcelComponent {
   }
 
   onInput() {
-    // this.$emit('table:textChanged', this.selection.current.text())
     this.updateTextInStore(this.selection.current.text())
   }
 
