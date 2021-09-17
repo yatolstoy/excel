@@ -3,7 +3,8 @@ import {
   CHANGE_STYLES,
   TABLE_RESIZE,
   APPLY_STYLE,
-  CHANGE_HEADER} from './types'
+  CHANGE_HEADER,
+  CHANGE_DATE_OPEN_SHEET} from './types'
 
 export function tableResize(data) {
   return {
@@ -40,6 +41,13 @@ export function applyStyle(data) {
 export function changeHeader(data) {
   return {
     type: CHANGE_HEADER,
+    data,
+  }
+}
+
+export function changeDateOpenSheet(data) {
+  return {
+    type: CHANGE_DATE_OPEN_SHEET,
     data,
   }
 }
