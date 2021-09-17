@@ -109,15 +109,16 @@ class Dom {
   }
 
   text(text) {
-    if (typeof text !== undefined) {
+    if (typeof text !== 'undefined') {
       this.$el.textContent = text
       return this
     }
     if (this.$el.tagName.toLowerCase() === 'input') {
-      return this.$el.textContent.trim()
+      return this.$el.value.trim()
     }
     return this.$el.textContent.trim()
   }
+
 
   isSameEl($el) {
     return this.$el === $el.$el

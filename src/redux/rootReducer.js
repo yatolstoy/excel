@@ -2,7 +2,8 @@ import {CHANGE_TEXT,
   CHANGE_STYLES,
   TABLE_RESIZE,
   APPLY_STYLE,
-  CHANGE_HEADER} from './types'
+  CHANGE_HEADER,
+  CHANGE_DATE_OPEN_SHEET} from './types'
 
 export function rootReducer(state, action) {
   let field
@@ -36,6 +37,8 @@ export function rootReducer(state, action) {
       }
     case CHANGE_HEADER:
       return {...state, tableTitle: action.data}
+    case CHANGE_DATE_OPEN_SHEET:
+      return {...state, dateOpen: action.data}
     default:
       return state
   }
